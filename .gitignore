@@ -1,0 +1,10 @@
+*.pyc
+/.eggs
+/.testrepository
+/.tox/
+/AUTHORS
+/ChangeLog
+/build/
+/ceilometer_fiware.egg-info
+/dist/
+

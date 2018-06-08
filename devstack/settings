@@ -1,0 +1,13 @@
+# Devstack settings
+# These defaults can be overridden in the localrc section of the local.conf file
+
+# for newer versions???
+# define_plugin ceilometer_fiware
+# plugin_requires ceilometer_fiware ceilometer
+
+enable_service ceilometer_fiware
+
+# Tell emacs to use shell-script-mode
+## Local variables:
+## mode: shell-script
+## End:

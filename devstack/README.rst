@@ -1,0 +1,29 @@
+========================
+Installing with Devstack
+========================
+
+0. Prepare the Environment::
+
+    mkdir -p /opt/stack
+    chown -r $USER:$(groups | cut -d ' ' -f 1) /opt/stack
+
+1. Download DevStack::
+
+    git clone https://git.openstack.org/openstack-dev/devstack /opt/stack/devstack
+    cd /opt/stack/devstack
+
+2. Modify DevStack's local.conf to pull in both Ceilometer and this
+   project by adding in the section ``[[local|localrc]]`` or creating
+   the section with::
+
+    [[local|localrc]]
+    enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer stable/pike
+    enable_plugin ceilometer-fiware https://github.com/SmartInfrastructures/ceilometer-fiware.git
+
+3. See TODO then configure the installation through options in
+   local.conf as needed.
+
+4. Run ``stack.sh`` from devstack::
+
+    cd /opt/stack/devstack
+    ./stack.sh
