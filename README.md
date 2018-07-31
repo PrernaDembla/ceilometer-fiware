@@ -11,11 +11,7 @@ Installation
 Configure Ceilometer in one controller where the service
 =ceilometer-agent-central= is running.
 
-In =/etc/ceilometer/ceilometer.conf= and add these entries (with your
-current values).
-
-Pay attention to the netlist attribute: the names of external networks
-in your OpenStack installation.:
+Open the file `/etc/ceilometer/ceilometer.conf` and add these entries (_with your region values_) at the end:
 
     [region]
     latitude=1.1
@@ -24,6 +20,8 @@ in your OpenStack installation.:
     netlist=net04_ext,net05_ext
     ram_allocation_ratio=1.5
     cpu_allocation_ratio=16
+
+Pay attention to the `netlist` attribute: the names of external networks in your OpenStack installation.
 
 ### Install the plugin
 
