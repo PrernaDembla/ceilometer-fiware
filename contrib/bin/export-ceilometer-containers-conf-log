@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -u
+set -e
+set +x
+
+dump_ceilometer() {
+
+    HN="$(hostname)"
+    CNT="${1}"
+    printf "INFO: working on %s\n" "${CNT}"
+    docker exec -t "${CNT}" sh -c 'mkdir -p /tmp/report/etc/ /tmp/report/log; cp -ar /etc/ceilometer/ /tmp/report/etc'
+    # redact the passwords
+    docker exec -t "${CNT}" sh -c "find /tmp/report/etc/ceilometer/ -type f -print0 | xargs -0r sed -i -e 's/password *=\(.*\)/password = REDACTED/Ig'"
+    docker exec -t "${CNT}" sh -c 'mkdir -p /tmp/report/log; cp -ar /var/log/kolla/ceilometer/ /tmp/report/log'
+    docker exec -t "${CNT}" sh -c 'cd /tmp; tar czf report.tgz report'
+    docker cp "${CNT}":/tmp/report.tgz "report-${HN}-${CNT}.tgz"
+    docker exec -t "${CNT}" sh -c 'rm -Rf /tmp/report.tgz /tmp/report'
+    printf "INFO: Saved report in: %s\n" "report-${HN}-${CNT}.tgz" >&2
+}
+
+main() {
+    CONTAINERS=$(docker ps --format "{{.Names}}" --filter 'name=ceilometer*')
+
+    if [ -z "${CONTAINERS}" ];
+    then
+        printf "WARNING: No ceilometer container running on this host\n" >&2
+    else
+        for CNT in ${CONTAINERS};
+        do
+            dump_ceilometer "${CNT}";
+        done
+    fi
+}
+
+main
