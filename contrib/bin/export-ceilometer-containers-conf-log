@@ -12,7 +12,12 @@ dump_ceilometer() {
     docker exec -t "${CNT}" sh -c 'mkdir -p /tmp/report/etc/ /tmp/report/log; cp -ar /etc/ceilometer/ /tmp/report/etc'
     # redact the passwords
     docker exec -t "${CNT}" sh -c "find /tmp/report/etc/ceilometer/ -type f -print0 | xargs -0r sed -i -e 's/password *=\(.*\)/password = REDACTED/Ig'"
-    docker exec -t "${CNT}" sh -c 'mkdir -p /tmp/report/log; cp -ar /var/log/kolla/ceilometer/ /tmp/report/log'
+    # redact the key
+    docker exec -t "${CNT}" sh -c "find /tmp/report/etc/ceilometer/ -type f -print0 | xargs -0r sed -i -e 's/.*_key *=\(.*\)/password = REDACTED/Ig'"
+    # TODO: some tls/ssl certificate may also be present and need to be discarded
+    # TODO: maybe also some url in config may contain sensitive data to be discarded
+    # save only latest log
+    docker exec -t "${CNT}" sh -c 'mkdir -p /tmp/report/log; cp -ar /var/log/kolla/ceilometer/*log /tmp/report/log'
     docker exec -t "${CNT}" sh -c 'cd /tmp; tar czf report.tgz report'
     docker cp "${CNT}":/tmp/report.tgz "report-${HN}-${CNT}.tgz"
     docker exec -t "${CNT}" sh -c 'rm -Rf /tmp/report.tgz /tmp/report'
